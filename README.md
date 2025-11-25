@@ -8,12 +8,12 @@ Dieses Projekt ist für **Python 3.12** ausgelegt und bringt Bootstrap-Skripte f
 # im Projektordner
 bash setup_venv.sh
 source .venv/bin/activate
-llm-arena --prompt "Erkläre TCP in drei Sätzen" --reveal-provenance false
+llm-arena --prompt "Erkläre TCP in drei Sätzen" --no-reveal-provenance
 ```
 
 Oder bequem per Wrapper, der die venv bei Bedarf automatisch anlegt:
 ```bash
-bash run.sh --prompt "Erkläre TCP in drei Sätzen" --reveal-provenance false
+bash run.sh --prompt "Erkläre TCP in drei Sätzen" --no-reveal-provenance
 ```
 
 ## Schnellstart (Windows PowerShell)
@@ -22,7 +22,7 @@ bash run.sh --prompt "Erkläre TCP in drei Sätzen" --reveal-provenance false
 # im Projektordner
 .\setup_venv.ps1
 .\.venv\Scripts\Activate.ps1
-llm-arena --prompt "Erkläre TCP in drei Sätzen" --reveal-provenance false
+llm-arena --prompt "Erkläre TCP in drei Sätzen" --no-reveal-provenance
 ```
 
 ## Konfiguration
@@ -52,7 +52,7 @@ python -m pip install -e .   # optional, für CLI-Einstiegspunkt
 
 ```bash
 # innerhalb der venv
-llm-arena --prompt "Vergleiche UDP und TCP in 5 Sätzen." --reveal-provenance false
+llm-arena --prompt "Vergleiche UDP und TCP in 5 Sätzen." --no-reveal-provenance
 ```
 
 Ergebnisse:
