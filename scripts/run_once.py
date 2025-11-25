@@ -94,7 +94,7 @@ def main(
             "votes": agg["votes"],
             "mean_scores": agg["mean_scores"],
             "winner_answer": {
-                "id": agg["winner_answer_id"],
+                "provider": agg["winner_provider"],
                 "text": agg["winner_answer_text"]
             }
         }
