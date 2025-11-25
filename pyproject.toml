@@ -19,3 +19,6 @@ dependencies = [
 
 [project.scripts]
 llm-arena = "scripts.run_once:app"
+
+[tool.setuptools]
+packages = ["llm_arena", "scripts"]
