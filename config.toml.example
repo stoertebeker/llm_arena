@@ -1,0 +1,47 @@
+[providers]
+base_url = "https://your-litellm-server.com"   # LiteLLM-Endpoint (OpenAI-kompatibel)
+api_key  = "ENV:LITELLM_API_KEY"              # Referenz auf Umgebungsvariable oder fester String
+
+# Kandidaten-Modelle (die Antworten erzeugen)
+[[candidates]]
+name  = "openai"
+model = "gpt-4o"  # Oder gpt-4, gpt-3.5-turbo, etc.
+
+[[candidates]]
+name  = "anthropic"
+model = "claude-3-5-sonnet-20241022"  # Oder claude-3-opus, claude-3-haiku
+
+[[candidates]]
+name  = "google"
+model = "gemini-1.5-pro"  # Oder gemini-1.5-flash
+
+# Jury-Modelle (können dieselben sein + optional externe)
+[[judges]]
+name  = "openai"
+model = "gpt-4o"
+
+[[judges]]
+name  = "anthropic"
+model = "claude-3-5-sonnet-20241022"
+
+[[judges]]
+name  = "google"
+model = "gemini-1.5-pro"
+
+# Optionaler externer Judge (LM Studio, Ollama o.ä.)
+# [[judges]]
+# name     = "external"
+# model    = "llama3.1:8b"  # Lokales Modell
+# base_url = "http://localhost:1234/v1"   # OpenAI-kompatibel
+# api_key  = "ENV:EXTERNAL_JUDGE_API_KEY"   # oder leer: ""
+
+[settings]
+reveal_provenance = false    # true = zeigt Provider-Zuordnung den Judges (für Bias-Analyse)
+elo_enabled = true          # Elo-Rating-System aktivieren
+elo_initial = 1500         # Start-Elo für neue Provider
+elo_k = 16                 # Elo-Update-Faktor (16 = standard)
+temperature = 0.2          # Niedrig für konsistente Bewertungen
+top_p = 1.0               # Nucleus sampling
+max_tokens = 1024         # Maximale Token pro Antwort
+request_timeout_seconds = 120  # HTTP-Timeout
+retries = 1               # Anzahl Wiederholungsversuche
