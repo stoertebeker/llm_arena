@@ -45,6 +45,13 @@ cp config.toml.example config.toml
 
 Öffne die `config.toml` und trage deinen LiteLLM-Endpunkt und API-Key (oder Referenzen zu Umgebungsvariablen) ein.
 
+### Funktionsweise der Konfiguration
+
+- **Nur OpenAI-kompatible APIs:** Das Framework ist darauf ausgelegt, mit Servern zu kommunizieren, die eine OpenAI-kompatible API bereitstellen (z.B. LiteLLM, Ollama, LM Studio).
+- **Globale & Lokale Konfiguration:** Der `[providers]`-Block definiert die Standard-`base_url` und den `api_key` für alle Modelle.
+- **Individuelle Anpassung:** Innerhalb eines `[[candidates]]`- oder `[[judges]]`-Blocks kannst du die `base_url` und den `api_key` überschreiben. Das ist nützlich, um verschiedene Dienste (z.B. LiteLLM und einen lokalen Ollama-Server) gleichzeitig zu verwenden.
+- **Kandidaten & Judges:** Die Struktur für `[[candidates]]` und `[[judges]]` ist identisch. Du kannst jedes Modell sowohl als Antwort-Generator als auch als Bewerter einsetzen.
+
 ## 2. Benutzung
 
 **Schritt 1: Virtuelle Umgebung aktivieren**

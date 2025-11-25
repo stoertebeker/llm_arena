@@ -1,15 +1,25 @@
+# ================= Globaler Fallback =================
+# Definiert die Standard-URL und den API-Key für alle Modelle,
+# bei denen keine eigenen Werte gesetzt sind.
 [providers]
-base_url = "https://your-litellm-server.com"   # LiteLLM-Endpoint (OpenAI-kompatibel)
-api_key  = "ENV:LITELLM_API_KEY"              # Referenz auf Umgebungsvariable oder fester String
+base_url = "https://your-litellm-server.com"   # z.B. dein zentraler LiteLLM-Endpunkt
+api_key  = "ENV:LITELLM_API_KEY"              # API-Key für den Standard-Endpunkt
+
+# ================= Kandidaten & Judges =================
+# Definiere hier die Modelle, die Antworten generieren (candidates)
+# und die Modelle, die diese Antworten bewerten (judges).
+# Die Struktur ist für beide identisch.
 
 # Kandidaten-Modelle (die Antworten erzeugen)
 [[candidates]]
 name  = "openai"
-model = "gpt-4o"  # Oder gpt-4, gpt-3.5-turbo, etc.
+model = "gpt-4o"  # Modellname, wie ihn der Ziel-Server erwartet
+# Nutzt globale base_url und api_key von [providers]
 
 [[candidates]]
 name  = "anthropic"
-model = "claude-3-5-sonnet-20241022"  # Oder claude-3-opus, claude-3-haiku
+model = "claude-3-5-sonnet-20241022"
+# Nutzt ebenfalls die globalen Werte
 
 [[candidates]]
 name  = "google"
@@ -28,12 +38,13 @@ model = "claude-3-5-sonnet-20241022"
 name  = "google"
 model = "gemini-1.5-pro"
 
-# Optionaler externer Judge (LM Studio, Ollama o.ä.)
+# Beispiel für einen lokalen Judge (Ollama, LM Studio etc.),
+# der die globalen Provider-Einstellungen überschreibt.
 # [[judges]]
-# name     = "external"
-# model    = "llama3.1:8b"  # Lokales Modell
-# base_url = "http://localhost:1234/v1"   # OpenAI-kompatibel
-# api_key  = "ENV:EXTERNAL_JUDGE_API_KEY"   # oder leer: ""
+# name     = "local_llama3"
+# model    = "llama3"  # Modellname, wie ihn Ollama/LM Studio kennt
+# base_url = "http://localhost:11434/v1"   # Eigene URL, die den globalen Wert überschreibt
+# api_key  = "" # Lokale Modelle benötigen oft keinen Key
 
 [settings]
 reveal_provenance = false    # true = zeigt Provider-Zuordnung den Judges (für Bias-Analyse)
