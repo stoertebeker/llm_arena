@@ -56,6 +56,7 @@ def main(
             reveal_provenance=cfg.settings.reveal_provenance,
             params=params,
             retries=cfg.settings.retries,
+            run_id=run_id,
         )
 
         agg = aggregate_results(judgements, triplet)
