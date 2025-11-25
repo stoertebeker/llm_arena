@@ -27,6 +27,8 @@ llm-arena --prompt "Erkläre TCP in drei Sätzen" --reveal-provenance false
 
 ## Konfiguration
 
+> **Wichtig:** Kopiere zuerst die `config.toml.example` zu `config.toml` und trage deine eigenen API-Keys und Endpunkte ein.
+
 Alle zentralen Variablen liegen in **`config.toml`**:
 - LiteLLM-Endpoint/Key (`[providers]`)
 - Kandidaten- und Jury-Modelle (`[[candidates]]`, `[[judges]]`)
