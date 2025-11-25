@@ -1,2 +1,0 @@
-[console_scripts]
-llm-arena = scripts.run_once:app
