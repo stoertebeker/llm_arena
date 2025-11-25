@@ -12,6 +12,11 @@ class OpenAICompatClient(ModelClient):
         self.api_key = api_key or ""
         self.timeout = timeout
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout)
+        # Ensure the base_url for the client does not end with /v1
+        client_base_url = self.base_url
+        if client_base_url.endswith('/v1'):
+            client_base_url = client_base_url[:-3]
+        self._client = httpx.AsyncClient(base_url=client_base_url, timeout=self.timeout)
     
     async def chat(self, *, messages: Sequence[ChatMessage], params: Mapping[str, Any]) -> str:
         payload = {

@@ -57,6 +57,7 @@ async def _judge_one(client: OpenAICompatClient, rendered_prompt: str, params: d
             )
             if attempt < retries:
                 repair = ChatMessage(role="user", content="Your last output was not valid JSON per schema. Respond again with ONLY the valid JSON object.")
+                raw_response_repair = ""
                 try:
                     raw_response_repair = await client.chat(messages=[sys, usr, repair], params=params)
                     clean_json_str_repair = _extract_json(raw_response_repair)
