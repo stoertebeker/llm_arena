@@ -1,0 +1,88 @@
+## Project Brief — LLM Arena
+
+### Ziel
+
+Ein „Model-Arena“-Framework, das drei LLM-Anbieter (OpenAI, Anthropic, Google) **über einen LiteLLM-Server** gegeneinander antreten lässt.
+Pro Prompt werden drei Kandidaten-Antworten erzeugt, anonymisiert (A/B/C) und von einer Jury bewertet (die drei Anbieter selbst + optional **externer Judge** wie LM Studio). Ausgabe: **Sieger-Modell**, **Sieger-Antwort**, **Stimmen** und **Kriterienscores**. Optional: **Elo-Rating** aus Paarvergleichen.
+
+### Architektur (Kurzüberblick)
+
+* **Zentrale Config**: `config.toml`
+
+  * `providers`: LiteLLM `base_url`, `api_key` (auch via `ENV:…`)
+  * `[[candidates]]`: drei Routen/Modelle für die Antworterzeugung
+  * `[[judges]]`: Jury-Modelle (können identisch zu candidates sein + optional extern)
+  * `settings`: `reveal_provenance`, `elo_*`, `temperature`, `top_p`, `max_tokens`, `request_timeout_seconds`, `retries`
+* **Module** (`llm_arena/`):
+
+  * `types.py`: Pydantic-Modelle (strenges JSON für Judging)
+  * `config.py`: Laden/Validieren von `config.toml` inkl. `ENV:`-Auflösung
+  * `normalization.py`: Text-Normalisierung
+  * `providers/openai_compat.py`: OpenAI-kompatible Chat-Client (httpx, async)
+  * `generation.py`: Kandidaten parallel abfragen, normalisieren, anonymisieren, **shuffle**
+  * `prompts/judge_prompt.txt`: Bewertungs-Template (Jinja2)
+  * `judging.py`: Jury-Requests, striktes JSON-Parsing + ein Retry
+  * `aggregation.py`: Mehrheitsentscheid, Mittelwerte je Provider
+  * `elo.py`: Paarweise Elo-Updates aus dem Dreier-Match
+  * `logging_ext.py`: JSONL-Eventlogging
+  * `utils.py`: Run-IDs, Zeit
+* **CLI**: `scripts/run_once.py` (Typer)
+
+  * Beispiel: `llm-arena --prompt "…" --reveal-provenance false`
+
+### Anonymisierung & Bias-Schalter
+
+* Standard: Antworten werden als **A/B/C** anonymisiert und per **Shuffle** gemischt.
+* **`reveal_provenance`** (Config oder CLI-Flag) injiziert optional ein Mapping (A→Provider …) in den Judge-Prompt, um **Self-Preference-Bias** zu messen.
+
+### Bewertungsrubrik (je 0–10, int)
+
+* `correctness`, `completeness`, `clarity`, `safety`, `evidence`, `relevance`
+  Strenges JSON-Schema (Pydantic validiert):
+
+```json
+{
+  "winner": "A|B|C",
+  "scores": {
+    "A": {"correctness":0,"completeness":0,"clarity":0,"safety":0,"evidence":0,"relevance":0},
+    "B": {...},
+    "C": {...}
+  },
+  "rationale": "short explanation"
+}
+```
+
+### Ausgaben (final)
+
+* Sieger-Provider, Sieger-Antwort (ID + Text)
+* Stimmen je Provider, mittlere Scores je Provider
+* Provenance-Map (A/B/C → Provider)
+* Optional: Elo-Rating-Updates (pro Run lokal berechnet)
+
+### Nicht-Ziele (bewusst weggelassen)
+
+* Keine Debatten-/Refine-Runden
+* Keine mehrstufige Caching-/Kostenrechnung
+* Keine Batch-/HTML-Reports (derzeit)
+
+### Betriebsanforderungen
+
+* **Python 3.12**, venv-Bootstrap (`setup_venv.sh` / `setup_venv.ps1`)
+* Abhängigkeiten: httpx (async), pydantic v2, jinja2, typer, rich, orjson
+* LiteLLM muss OpenAI-kompatible `/v1/chat/completions` bereitstellen
+* Optionaler externer Judge via lokalem OpenAI-kompatiblem Endpoint (z. B. LM Studio)
+
+### Dev-Konventionen
+
+* Async I/O, parallele Requests
+* Niedrige Temperature (Default: 0.2) für Reproduzierbarkeit
+* **Nur** gültiges JSON vom Judge akzeptieren; 1 kurzer Reparatur-Retry
+* Keine Anbieter-Namen im Textformat der Kandidaten (Anonymisierung schützen)
+* Logs: JSON/JSONL, keine Secrets im Repo
+
+### TODO (offen für die KI)
+
+* Batch-Runner (`scripts/run_batch.py`)
+* Optionale Gewichtung der Kriterien
+* Markdown/HTML-Bericht mit Stimmenmatrix & Scores
+* Stabileres Error Handling bei Provider-Timeouts/429

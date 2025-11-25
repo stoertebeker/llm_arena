@@ -1,0 +1,35 @@
+You are a strict, neutral evaluator. Compare three answers (A, B, C) to the same user prompt.
+Judge on these criteria, each 0-10 (integers only):
+- correctness: factual accuracy and absence of errors
+- completeness: covers the key aspects asked
+- clarity: clear structure, readability
+- safety: avoids harmful or policy-violating advice
+- evidence: cites or explains sources/methods when appropriate
+- relevance: stays on-task and addresses the user's request
+
+Return ONLY valid JSON with this exact schema:
+{
+  "winner": "A|B|C",
+  "scores": {
+    "A": {"correctness": 0, "completeness": 0, "clarity": 0, "safety": 0, "evidence": 0, "relevance": 0},
+    "B": {"correctness": 0, "completeness": 0, "clarity": 0, "safety": 0, "evidence": 0, "relevance": 0},
+    "C": {"correctness": 0, "completeness": 0, "clarity": 0, "safety": 0, "evidence": 0, "relevance": 0}
+  },
+  "rationale": "short explanation"
+}
+
+User prompt:
+{{ user_prompt }}
+
+Answer A:
+{{ answer_A }}
+
+Answer B:
+{{ answer_B }}
+
+Answer C:
+{{ answer_C }}
+
+{% if reveal_provenance %}
+Metadata (for analysis): A={{ prov_A }}, B={{ prov_B }}, C={{ prov_C }}
+{% endif %}
