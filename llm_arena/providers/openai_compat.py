@@ -28,7 +28,24 @@ class OpenAICompatClient(ModelClient):
         r.raise_for_status()
         data = r.json()
         try:
-            return data["choices"][0]["message"]["content"]
+            message = data["choices"][0]["message"]
+            content = message.get("content", "")
+            
+            # Handle cases where content is None or empty (e.g., due to length limits)
+            if content is None:
+                content = ""
+            
+            # If content is still empty, check finish_reason for explanation
+            if not content.strip():
+                finish_reason = data["choices"][0].get("finish_reason", "unknown")
+                if finish_reason == "length":
+                    return "[Response truncated due to length limit]"
+                elif finish_reason == "content_filter":
+                    return "[Response blocked by content filter]"
+                else:
+                    return "[No content generated]"
+            
+            return content
         except Exception as e:
             raise RuntimeError(f"{self.name} invalid response format: {data}") from e
     
